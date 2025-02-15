@@ -65,9 +65,9 @@ func run(root string, out io.Writer, cfg config) error {
 
 // filterOut checks if the given path has to be filtered out according
 // to the following conditions:
-// 		- the path points to a directory
-//		- the file is less than the minimum size
-//		- the file extension doesn't match the provided extension.
+//   - the path points to a directory
+//   - the file is less than the minimum size
+//   - the file extension doesn't match the provided extension.
 func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	if info.IsDir() || info.Size() < minSize {
 		return true
@@ -78,4 +78,10 @@ func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	}
 
 	return false
+}
+
+// listFile writes the path of the file to the STDOUT.
+func listFile(path string, out io.Writer) error {
+	_, err := fmt.Fprintln(out, path)
+	return err
 }

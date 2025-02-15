@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"bytes"
+	"testing"
+)
 
 func TestRun(t *testing.T) {
 	testCases := []struct {
@@ -39,5 +42,21 @@ func TestRun(t *testing.T) {
 			cfg:      config{ext: ".gz", size: 0, list: true},
 			expected: "",
 		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buf bytes.Buffer
+
+			if err := run(tc.root, &buf, tc.cfg); err != nil {
+				t.Fatal(err)
+			}
+
+			res := buf.String()
+
+			if tc.expected != res {
+				t.Errorf("expected %q, got %q instead", tc.expected, res)
+			}
+		})
 	}
 }

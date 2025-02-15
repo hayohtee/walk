@@ -1,6 +1,10 @@
 package main
 
-import "flag"
+import (
+	"flag"
+	"fmt"
+	"os"
+)
 
 // config holds the configurations for the walk CLI.
 type config struct {
@@ -19,4 +23,14 @@ func main() {
 	size := flag.Int64("size", 0, "Minimum file size")
 	flag.Parse()
 
+	c := config{
+		ext:  *ext,
+		size: *size,
+		list: *list,
+	}
+
+	if err := run(*root, os.Stdout, c); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

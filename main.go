@@ -26,12 +26,14 @@ func main() {
 	list := flag.Bool("list", false, "List files only")
 	ext := flag.String("ext", "", "File extension to filter out")
 	size := flag.Int64("size", 0, "Minimum file size")
+	del := flag.Bool("del", false, "Delete files")
 	flag.Parse()
 
 	c := config{
 		ext:  *ext,
 		size: *size,
 		list: *list,
+		del:  *del,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {

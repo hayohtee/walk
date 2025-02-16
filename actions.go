@@ -7,11 +7,15 @@ import (
 	"path/filepath"
 )
 
-// filterOut checks if the given path has to be filtered out according
-// to the following conditions:
-//   - the path points to a directory
-//   - the file is less than the minimum size
-//   - the file extension doesn't match the provided extension.
+// filterOut filters out files based on the provided criteria.
+// Parameters:
+//   - path: The file path to check.
+//   - ext: The file extension to filter by. If empty, no extension filtering is applied.
+//   - minSize: The minimum file size in bytes. Files smaller than this size are filtered out.
+//   - info: The FileInfo structure containing file metadata.
+//
+// Returns:
+//   - true if the file should be filtered out, false otherwise.
 func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	if info.IsDir() || info.Size() < minSize {
 		return true
@@ -24,8 +28,24 @@ func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	return false
 }
 
-// listFile writes the path of the file to the STDOUT.
+// listFile writes the given file path to the provided writer.
+// Parameters:
+//   - path: The file path to list.
+//   - out: The writer to output the file path.
+//
+// Returns:
+//   - An error if writing to the writer fails, nil otherwise.
 func listFile(path string, out io.Writer) error {
 	_, err := fmt.Fprintln(out, path)
 	return err
+}
+
+// delFile deletes the file at the given path.
+// Parameters:
+//   - path: The file path to delete.
+//
+// Returns:
+//   - An error if the file deletion fails, nil otherwise.
+func delFile(path string) error {
+	return os.Remove(path)
 }

@@ -119,6 +119,15 @@ func TestRunDelExtension(t *testing.T) {
 			if tc.expected != res {
 				t.Errorf("expected %q, got %q instead\n", tc.expected, res)
 			}
+
+			filesLeft, err := os.ReadDir(tempDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if len(filesLeft) != tc.nNoDelete {
+				t.Errorf("expected %d files left, but got %d instead\n", tc.nNoDelete, len(filesLeft))
+			}
 		})
 	}
 }

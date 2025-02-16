@@ -29,3 +29,12 @@ func listFile(path string, out io.Writer) error {
 	_, err := fmt.Fprintln(out, path)
 	return err
 }
+
+// delFile deletes the file at the given path.
+// Parameters:
+//   - path: The file path to delete.
+// Returns:
+//   - An error if the file deletion fails, nil otherwise.
+func delFile(path string) error {
+	return os.Remove(path)
+}

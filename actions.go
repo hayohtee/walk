@@ -24,7 +24,13 @@ func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	return false
 }
 
-// listFile writes the path of the file to the STDOUT.
+// listFile writes the given file path to the provided writer.
+// Parameters:
+//   - path: The file path to list.
+//   - out: The writer to output the file path.
+//
+// Returns:
+//   - An error if writing to the writer fails, nil otherwise.
 func listFile(path string, out io.Writer) error {
 	_, err := fmt.Fprintln(out, path)
 	return err
@@ -33,6 +39,7 @@ func listFile(path string, out io.Writer) error {
 // delFile deletes the file at the given path.
 // Parameters:
 //   - path: The file path to delete.
+//
 // Returns:
 //   - An error if the file deletion fails, nil otherwise.
 func delFile(path string) error {

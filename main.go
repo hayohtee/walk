@@ -17,6 +17,8 @@ type config struct {
 	size int64
 	// list determine whether to list the files or not.
 	list bool
+	// del determine whether to delete the files or not.
+	del bool
 }
 
 func main() {

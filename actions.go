@@ -7,11 +7,15 @@ import (
 	"path/filepath"
 )
 
-// filterOut checks if the given path has to be filtered out according
-// to the following conditions:
-//   - the path points to a directory
-//   - the file is less than the minimum size
-//   - the file extension doesn't match the provided extension.
+// filterOut filters out files based on the provided criteria.
+// Parameters:
+//   - path: The file path to check.
+//   - ext: The file extension to filter by. If empty, no extension filtering is applied.
+//   - minSize: The minimum file size in bytes. Files smaller than this size are filtered out.
+//   - info: The FileInfo structure containing file metadata.
+//
+// Returns:
+//   - true if the file should be filtered out, false otherwise.
 func filterOut(path, ext string, minSize int64, info os.FileInfo) bool {
 	if info.IsDir() || info.Size() < minSize {
 		return true

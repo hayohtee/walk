@@ -98,6 +98,29 @@ func TestRunDelExtension(t *testing.T) {
 			expected:    "",
 		},
 	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buf bytes.Buffer
+
+			tempDir, cleanup := createTempDir(t, map[string]int{
+				tc.cfg.ext:     tc.nDelete,
+				tc.extNoDelete: tc.nNoDelete,
+			})
+
+			defer cleanup()
+
+			if err := run(tempDir, &buf, tc.cfg); err != nil {
+				t.Fatal(err)
+			}
+
+			res := buf.String()
+
+			if tc.expected != res {
+				t.Errorf("expected %q, got %q instead\n", tc.expected, res)
+			}
+		})
+	}
 }
 
 func createTempDir(t *testing.T, files map[string]int) (string, func()) {

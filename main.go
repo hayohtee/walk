@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -19,6 +20,8 @@ type config struct {
 	list bool
 	// del determine whether to delete the files or not.
 	del bool
+	// out represents the log destination writer.
+	out io.Writer
 }
 
 func main() {
@@ -27,13 +30,27 @@ func main() {
 	ext := flag.String("ext", "", "File extension to filter out")
 	size := flag.Int64("size", 0, "Minimum file size")
 	del := flag.Bool("del", false, "Delete files")
+	logFile := flag.String("log", "", "Log deletes to this file")
 	flag.Parse()
+
+	var out io.Writer = os.Stdout
+
+	if *logFile != "" {
+		f, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		out = f
+	}
 
 	c := config{
 		ext:  *ext,
 		size: *size,
 		list: *list,
 		del:  *del,
+		out: out,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {
@@ -48,6 +65,8 @@ func main() {
 // requested operations on the files and sub-directories
 // it encounter as specified in the cfg parameter.
 func run(root string, out io.Writer, cfg config) error {
+	delLogger := log.New(cfg.out, "DELETED FILE: ", log.LstdFlags)
+
 	return filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -63,7 +82,7 @@ func run(root string, out io.Writer, cfg config) error {
 		}
 
 		if cfg.del {
-			return delFile(path)
+			return delFile(path, delLogger)
 		}
 
 		// List is the default option if nothing else was set.

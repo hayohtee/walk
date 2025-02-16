@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -40,12 +41,20 @@ func listFile(path string, out io.Writer) error {
 	return err
 }
 
-// delFile deletes the file at the given path.
+
+// delFile deletes the file at the specified path and logs the deletion.
+//
 // Parameters:
-//   - path: The file path to delete.
+//   - path: The path to the file to be deleted.
+//   - delLogger: A logger to log the deletion of the file.
 //
 // Returns:
-//   - An error if the file deletion fails, nil otherwise.
-func delFile(path string) error {
-	return os.Remove(path)
+//   - error: An error if the file could not be deleted, otherwise nil.
+func delFile(path string, delLogger *log.Logger) error {
+	err := os.Remove(path)
+	if err != nil {
+		return err
+	}
+	delLogger.Println(path)
+	return nil
 }

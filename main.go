@@ -19,6 +19,8 @@ type config struct {
 	list bool
 	// del determine whether to delete the files or not.
 	del bool
+	// out represents the log destination writer.
+	out io.Writer
 }
 
 func main() {
@@ -27,6 +29,7 @@ func main() {
 	ext := flag.String("ext", "", "File extension to filter out")
 	size := flag.Int64("size", 0, "Minimum file size")
 	del := flag.Bool("del", false, "Delete files")
+	logFile := flag.String("log", "", "Log deletes to this file")
 	flag.Parse()
 
 	c := config{

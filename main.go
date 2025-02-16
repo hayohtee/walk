@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -64,6 +65,8 @@ func main() {
 // requested operations on the files and sub-directories
 // it encounter as specified in the cfg parameter.
 func run(root string, out io.Writer, cfg config) error {
+	delLogger := log.New(cfg.out, "DELETED FILE: ", log.LstdFlags)
+
 	return filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -79,7 +82,7 @@ func run(root string, out io.Writer, cfg config) error {
 		}
 
 		if cfg.del {
-			return delFile(path)
+			return delFile(path, delLogger)
 		}
 
 		// List is the default option if nothing else was set.

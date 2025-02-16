@@ -32,11 +32,24 @@ func main() {
 	logFile := flag.String("log", "", "Log deletes to this file")
 	flag.Parse()
 
+	var out io.Writer = os.Stdout
+
+	if *logFile != "" {
+		f, err := os.OpenFile(*logFile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		out = f
+	}
+
 	c := config{
 		ext:  *ext,
 		size: *size,
 		list: *list,
 		del:  *del,
+		out: out,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {

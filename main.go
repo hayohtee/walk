@@ -62,6 +62,10 @@ func run(root string, out io.Writer, cfg config) error {
 			return listFile(path, out)
 		}
 
+		if cfg.del {
+			return delFile(path)
+		}
+
 		// List is the default option if nothing else was set.
 		return listFile(path, out)
 	})

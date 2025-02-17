@@ -85,6 +85,12 @@ func run(root string, out io.Writer, cfg config) error {
 			return listFile(path, out)
 		}
 
+		if cfg.archive != "" {
+			if err := archiveFile(cfg.archive, root, path); err != nil {
+				return err
+			}
+		}
+
 		if cfg.del {
 			return delFile(path, delLogger)
 		}

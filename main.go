@@ -33,6 +33,7 @@ func main() {
 	size := flag.Int64("size", 0, "Minimum file size")
 	del := flag.Bool("del", false, "Delete files")
 	logFile := flag.String("log", "", "Log deletes to this file")
+	archive := flag.String("archive", "", "Archive directory")
 	flag.Parse()
 
 	var out io.Writer = os.Stdout
@@ -48,11 +49,12 @@ func main() {
 	}
 
 	c := config{
-		ext:  *ext,
-		size: *size,
-		list: *list,
-		del:  *del,
-		out:  out,
+		ext:     *ext,
+		size:    *size,
+		list:    *list,
+		del:     *del,
+		out:     out,
+		archive: *archive,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {

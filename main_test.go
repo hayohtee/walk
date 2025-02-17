@@ -143,6 +143,38 @@ func TestRunDelExtension(t *testing.T) {
 	}
 }
 
+func TestRunArchive(t *testing.T) {
+	testCases := []struct {
+		name         string
+		cfg          config
+		extNoArchive string
+		nArchive     int
+		nNoArchive   int
+	}{
+		{
+			name:         "ArchiveExtensionNoMatch",
+			cfg:          config{ext: ".log"},
+			extNoArchive: ".gz",
+			nArchive:     0,
+			nNoArchive:   10,
+		},
+		{
+			name:         "ArchiveExtensionMatch",
+			cfg:          config{ext: ".log"},
+			extNoArchive: "",
+			nArchive:     10,
+			nNoArchive:   0,
+		},
+		{
+			name:         "ArchiveExtensionMixed",
+			cfg:          config{ext: ".log"},
+			extNoArchive: ".gz",
+			nArchive:     5,
+			nNoArchive:   5,
+		},
+	}
+}
+
 func createTempDir(t *testing.T, files map[string]int) (string, func()) {
 	t.Helper()
 

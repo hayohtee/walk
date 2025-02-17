@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -172,6 +173,48 @@ func TestRunArchive(t *testing.T) {
 			nArchive:     5,
 			nNoArchive:   5,
 		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			tempDir, cleanup := createTempDir(t, map[string]int{
+				tc.cfg.ext:      tc.nArchive,
+				tc.extNoArchive: tc.nNoArchive,
+			})
+			defer cleanup()
+
+			archiveDir, cleanupArchive := createTempDir(t, nil)
+			defer cleanupArchive()
+
+			tc.cfg.archive = archiveDir
+
+			if err := run(tempDir, &buf, tc.cfg); err != nil {
+				t.Fatal(err)
+			}
+
+			pattern := filepath.Join(tempDir, fmt.Sprintf("*%s", tc.cfg.ext))
+			expFiles, err := filepath.Glob(pattern)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			expOut := strings.Join(expFiles, "\n")
+			res := strings.TrimSpace(buf.String())
+
+			if expOut != res {
+				t.Errorf("expected %q, but got %q instead\n", expOut, res)
+			}
+
+			filesArchived, err := os.ReadDir(archiveDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if len(filesArchived) != tc.nArchive {
+				t.Errorf("expected %d files archived, got %d instead\n", tc.nArchive, len(filesArchived))
+			}
+		})
 	}
 }
 

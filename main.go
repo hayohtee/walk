@@ -22,6 +22,8 @@ type config struct {
 	del bool
 	// out represents the log destination writer.
 	out io.Writer
+	// archive is the name of the directory to store the archived file.
+	archive string
 }
 
 func main() {
@@ -50,7 +52,7 @@ func main() {
 		size: *size,
 		list: *list,
 		del:  *del,
-		out: out,
+		out:  out,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {

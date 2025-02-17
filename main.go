@@ -22,6 +22,8 @@ type config struct {
 	del bool
 	// out represents the log destination writer.
 	out io.Writer
+	// archive is the name of the directory to store the archived file.
+	archive string
 }
 
 func main() {
@@ -31,6 +33,7 @@ func main() {
 	size := flag.Int64("size", 0, "Minimum file size")
 	del := flag.Bool("del", false, "Delete files")
 	logFile := flag.String("log", "", "Log deletes to this file")
+	archive := flag.String("archive", "", "Archive directory")
 	flag.Parse()
 
 	var out io.Writer = os.Stdout
@@ -46,11 +49,12 @@ func main() {
 	}
 
 	c := config{
-		ext:  *ext,
-		size: *size,
-		list: *list,
-		del:  *del,
-		out: out,
+		ext:     *ext,
+		size:    *size,
+		list:    *list,
+		del:     *del,
+		out:     out,
+		archive: *archive,
 	}
 
 	if err := run(*root, os.Stdout, c); err != nil {
@@ -79,6 +83,12 @@ func run(root string, out io.Writer, cfg config) error {
 		// If list was explicitly set, don't do anything else.
 		if cfg.list {
 			return listFile(path, out)
+		}
+
+		if cfg.archive != "" {
+			if err := archiveFile(cfg.archive, root, path); err != nil {
+				return err
+			}
 		}
 
 		if cfg.del {
